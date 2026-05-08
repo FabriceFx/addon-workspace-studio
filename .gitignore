@@ -1,0 +1,10 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Exemples (fichiers de référence, pas du projet)
+exempleCalculator.*

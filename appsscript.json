@@ -1,0 +1,65 @@
+{
+    "timeZone": "Europe/Paris",
+    "exceptionLogging": "STACKDRIVER",
+    "runtimeVersion": "V8",
+    "addOns": {
+        "common": {
+            "name": "Envoyer WhatsApp",
+            "logoUrl": "https://www.gstatic.com/images/branding/product/2x/chat_2020q4_48dp.png",
+            "useLocaleFromApp": true
+        },
+        "flows": {
+            "workflowElements": [
+                {
+                    "id": "send_whatsapp_message",
+                    "state": "ACTIVE",
+                    "name": "Envoyer un message WhatsApp",
+                    "description": "Envoie un message WhatsApp à un numéro de téléphone via une API de messagerie.",
+                    "workflowAction": {
+                        "onConfigFunction": "onConfigSendWhatsApp",
+                        "onExecuteFunction": "onExecuteSendWhatsApp",
+                        "inputs": [
+                            {
+                                "id": "recipient_phone",
+                                "description": "Le numéro de téléphone du destinataire (format international)",
+                                "dataType": {
+                                    "basicType": "STRING"
+                                },
+                                "cardinality": "SINGLE"
+                            },
+                            {
+                                "id": "message_body",
+                                "description": "Le contenu du message WhatsApp à envoyer",
+                                "dataType": {
+                                    "basicType": "STRING"
+                                },
+                                "cardinality": "SINGLE"
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "id": "status",
+                                "description": "Le statut de l'envoi (Success ou Error)",
+                                "cardinality": "SINGLE",
+                                "dataType": {
+                                    "basicType": "STRING"
+                                }
+                            },
+                            {
+                                "id": "message_id",
+                                "description": "L'identifiant du message renvoyé par l'API",
+                                "cardinality": "SINGLE",
+                                "dataType": {
+                                    "basicType": "STRING"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "oauthScopes": [
+        "https://www.googleapis.com/auth/script.external_request"
+    ]
+}
