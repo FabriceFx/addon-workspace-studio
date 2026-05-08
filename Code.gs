@@ -27,14 +27,15 @@
  * @return {Object} The action response object.
  */
 function pushCard(card) {
-  return {
+    return {
 
-      "action": {
-        "navigations": [{
-            "push_card": card
-          }
-        ]
-      }  };  
+        "action": {
+            "navigations": [{
+                "push_card": card
+            }
+            ]
+        }
+    };
 }
 
 /**
@@ -44,16 +45,16 @@ function pushCard(card) {
  * @return {Object} The render actions object.
  */
 function updateCard(card) {
-  return {
-    "render_actions": {
-      "action": {
-        "navigations": [{
-            "update_card": card
-          }
-        ]
-      }
-    }
-  };
+    return {
+        "render_actions": {
+            "action": {
+                "navigations": [{
+                    "update_card": card
+                }
+                ]
+            }
+        }
+    };
 }
 
 /**
@@ -62,15 +63,15 @@ function updateCard(card) {
  * @return {Object} The button widget object.
  */
 function saveButton() {
-  return {
-      "text": "Enregistrer",
-      "onClick": {
-        "hostAppAction" : {
-          "workflowAction" : {
-            "saveWorkflowAction" : {}
-          }
-        }
-      },
+    return {
+        "text": "Enregistrer",
+        "onClick": {
+            "hostAppAction": {
+                "workflowAction": {
+                    "saveWorkflowAction": {}
+                }
+            }
+        },
     };
 }
 
@@ -81,13 +82,13 @@ function saveButton() {
  * @return {Object} The button widget object.
  */
 function refreshButton(functionName) {
-  return {
-      "text": "Rafraîchir",
-      "onClick": {
-        "action" : {
-          "function" : functionName
-        }
-      },
+    return {
+        "text": "Rafraîchir",
+        "onClick": {
+            "action": {
+                "function": functionName
+            }
+        },
     };
 }
 
@@ -110,40 +111,40 @@ function refreshButton(functionName) {
  * @return {Object} L'objet de réponse contenant la carte à afficher.
  */
 function onConfigSendWhatsApp() {
-  var card = {
-    "sections": [
-      {
-        "header": "Envoyer un message WhatsApp",
-        "widgets": [
-          {
-            "textInput": {
-              "name": "recipient_phone",
-              "label": "Numéro du destinataire",
-              "hintText": "Ex: +33612345678",
-              "hostAppDataSource" : {
-                "workflowDataSource" : {
-                  "includeVariables" : true
-                }
-              }
+    var card = {
+        "sections": [
+            {
+                "header": "Envoyer un message WhatsApp",
+                "widgets": [
+                    {
+                        "textInput": {
+                            "name": "recipient_phone",
+                            "label": "Numéro du destinataire",
+                            "hintText": "Ex: +33612345678",
+                            "hostAppDataSource": {
+                                "workflowDataSource": {
+                                    "includeVariables": true
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "textInput": {
+                            "name": "message_body",
+                            "label": "Contenu du message",
+                            "type": "MULTIPLE_LINE",
+                            "hostAppDataSource": {
+                                "workflowDataSource": {
+                                    "includeVariables": true
+                                }
+                            }
+                        }
+                    }
+                ]
             }
-          },
-          {
-            "textInput": {
-              "name": "message_body",
-              "label": "Contenu du message",
-              "type": "MULTIPLE_LINE",
-              "hostAppDataSource" : {
-                "workflowDataSource" : {
-                  "includeVariables" : true
-                }
-              }
-            }
-          }
         ]
-      }
-    ]
-  };
-  return pushCard(card);
+    };
+    return pushCard(card);
 }
 
 
@@ -158,17 +159,17 @@ function onConfigSendWhatsApp() {
  * @return {RenderAction} L'action contenant les variables de sortie.
  */
 function outputVariables(variableDataMap) {
-  const workflowAction = AddOnsResponseService.newReturnOutputVariablesAction()
-    .setVariableDataMap(variableDataMap);
+    const workflowAction = AddOnsResponseService.newReturnOutputVariablesAction()
+        .setVariableDataMap(variableDataMap);
 
-  const hostAppAction = AddOnsResponseService.newHostAppAction()
-    .setWorkflowAction(workflowAction);
+    const hostAppAction = AddOnsResponseService.newHostAppAction()
+        .setWorkflowAction(workflowAction);
 
-  const renderAction = AddOnsResponseService.newRenderActionBuilder()
-    .setHostAppAction(hostAppAction)
-    .build();
+    const renderAction = AddOnsResponseService.newRenderActionBuilder()
+        .setHostAppAction(hostAppAction)
+        .build();
 
-  return renderAction;
+    return renderAction;
 }
 
 /**
@@ -181,36 +182,60 @@ function outputVariables(variableDataMap) {
  * @return {Object} Les variables de sortie.
  */
 function onExecuteSendWhatsApp(event) {
-  console.log("output: " + JSON.stringify(event));
+    console.log("output: " + JSON.stringify(event));
 
-  var phone = event.workflow.actionInvocation.inputs["recipient_phone"].stringValues[0];
-  var body = event.workflow.actionInvocation.inputs["message_body"].stringValues[0];
+    var phone = event.workflow.actionInvocation.inputs["recipient_phone"].stringValues[0];
+    var body = event.workflow.actionInvocation.inputs["message_body"].stringValues[0];
 
-  // Appel API vers le service de messagerie WhatsApp
-  // ⚠️ Remplacez l'URL et la clé API par vos valeurs réelles
-  var apiUrl = "https://api.votre-service.com/v1/send";
-  var options = {
-    "method": "post",
-    "contentType": "application/json",
-    "headers": { "Authorization": "Bearer VOTRE_CLE_API" },
-    "payload": JSON.stringify({ "to": phone, "message": body }),
-    "muteHttpExceptions": true
-  };
-
-  try {
-    var response = UrlFetchApp.fetch(apiUrl, options);
-    var result = JSON.parse(response.getContentText());
-
-    const variableDataMap = {
-      "status": AddOnsResponseService.newVariableData().addStringValue("Success"),
-      "message_id": AddOnsResponseService.newVariableData().addStringValue(result.id || "N/A")
+    // Appel API vers le service de messagerie WhatsApp
+    // ⚠️ Remplacez l'URL et la clé API par vos valeurs réelles
+    var apiUrl = "https://api.votre-service.com/v1/send";
+    var options = {
+        "method": "post",
+        "contentType": "application/json",
+        "headers": { "Authorization": "Bearer VOTRE_CLE_API" },
+        "payload": JSON.stringify({ "to": phone, "message": body }),
+        "muteHttpExceptions": true
     };
-    return outputVariables(variableDataMap);
 
-  } catch (e) {
-    const errorMap = {
-      "status": AddOnsResponseService.newVariableData().addStringValue("Error: " + e.message)
-    };
-    return outputVariables(errorMap);
-  }
+    try {
+        var response = UrlFetchApp.fetch(apiUrl, options);
+        var result = JSON.parse(response.getContentText());
+
+        const variableDataMap = {
+            "status": AddOnsResponseService.newVariableData().addStringValue("Success"),
+            "message_id": AddOnsResponseService.newVariableData().addStringValue(result.id || "N/A")
+        };
+        return outputVariables(variableDataMap);
+
+    } catch (e) {
+        const errorMap = {
+            "status": AddOnsResponseService.newVariableData().addStringValue("Error: " + e.message)
+        };
+        return outputVariables(errorMap);
+    }
+}
+
+// ============================================================
+// UTILITAIRES
+// ============================================================
+
+/**
+ * Prépare et retourne les variables de sortie pour le flux Workspace Studio.
+ *
+ * @param {Object} variableDataMap Un objet { clé: VariableData }.
+ * @return {RenderAction} L'action contenant les variables de sortie.
+ */
+function outputVariables(variableDataMap) {
+    const workflowAction = AddOnsResponseService.newReturnOutputVariablesAction()
+        .setVariableDataMap(variableDataMap);
+
+    const hostAppAction = AddOnsResponseService.newHostAppAction()
+        .setWorkflowAction(workflowAction);
+
+    const renderAction = AddOnsResponseService.newRenderActionBuilder()
+        .setHostAppAction(hostAppAction)
+        .build();
+
+    return renderAction;
 }
