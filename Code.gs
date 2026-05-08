@@ -215,27 +215,3 @@ function onExecuteSendWhatsApp(event) {
         return outputVariables(errorMap);
     }
 }
-
-// ============================================================
-// UTILITAIRES
-// ============================================================
-
-/**
- * Prépare et retourne les variables de sortie pour le flux Workspace Studio.
- *
- * @param {Object} variableDataMap Un objet { clé: VariableData }.
- * @return {RenderAction} L'action contenant les variables de sortie.
- */
-function outputVariables(variableDataMap) {
-    const workflowAction = AddOnsResponseService.newReturnOutputVariablesAction()
-        .setVariableDataMap(variableDataMap);
-
-    const hostAppAction = AddOnsResponseService.newHostAppAction()
-        .setWorkflowAction(workflowAction);
-
-    const renderAction = AddOnsResponseService.newRenderActionBuilder()
-        .setHostAppAction(hostAppAction)
-        .build();
-
-    return renderAction;
-}
